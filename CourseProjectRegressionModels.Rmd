@@ -1,0 +1,98 @@
+---
+title: "Regression Models Course Project (Coursera - JOHNS HOPKINS)"
+author: "Juan Carlos Rodriguez Rojo"
+date: "20 de marzo de 2016"
+output: html_document
+---
+
+#Motor Trend. Relationship between MPG (miles per gallon) and the kind of transmission
+
+##Executive Summary
+###Introduction
+
+In Motor Trend we have wondered about the power consumption of the motor vehicle. Specifically, we wonder if there is difference in consumption, measured in miles per gallon (MPG), between the cars that have manual transmission and with automatic transmission.
+
+What kind of transmission is better in terms of energy consumption?
+What is the difference between the two types of transmission?
+
+###Method
+
+To answer these questions, we will use the mtcars file, which contains information about all the variables involved. The mtcars file comprises fuel consumption (miles per gallon) and some aspects of vehicle for 32 models.
+
+First, we examine the distribution of MPG Variable comparing the two types of transmission. Thus, we can get a first impression about the change in consumption due to the change of transmission.
+
+But to address the issue accurately, we must go further. If we want to know if different consumption according to the type of transmission, consumption being a continuous variable, we could try to predict consumption using as independent variable transmission. Now, since we have other variables that can influence consumption, we will first observe what variables influence more on consumption and what is the position of the transmission in the set of variables. Depending on the results, we construct a final model.
+
+###Conclusion
+
+Summarily, the difference in MPG between two transmissions is significantly favorable to the manual transmission. However, there are other variables with significant influence, as shown in a process of stepwise regression, which are three independent variables: wt, and am QseC.
+
+Wt coefficients and am are significant and opposite. If we look at the effect of the interaction between wt and am about MPG, we see that this interaction must be considered in the model.
+
+The result is that am has a major impact, with lower consumption of the manual transmission, but the growth of weight can neutralize the advantage.
+
+##Appendix
+
+###Exploratory analysis
+
+Load and summarize data
+
+```{r}
+library(ggplot2)
+data(mtcars)
+summary(mtcars)
+mtcars$am <- factor(mtcars$am, labels = c("automatic", "manual"))
+```
+
+Difference between manual and automatic transmission. Box plot and analytics.
+
+```{r}
+#boxplot
+boxplot(mpg ~ am, data = mtcars, col = "red", xlab="Transmission", ylab="MPG", main="Miles Per Gallon and Transmission")
+#analytics
+difference <- t.test(mpg ~ am, data = mtcars)
+difference$p.value
+difference$estimate
+```
+
+###Model
+
+Initial model and better model without interaction.
+
+```{r}
+#initial model
+fullLm <- lm(mpg ~ ., data=mtcars)
+summary(fullLm)
+#better model
+stepLm <- step(fullLm, direction = "backward")
+summary(stepLm)
+```
+
+Exploratory Interaction between am and weight
+
+```{r}
+#Visual Interaction
+ggplot(mtcars, aes(x=wt, y=mpg, group=am, color=am)) + geom_point() + #scale_colour_discrete(labels=c("Automatic", "Manual")) + 
+xlab("weight") + ylab("miles per gallon") + ggtitle("MPG and Weight by Transmission")
+```
+
+Final model with interaction
+
+```{r}
+#Final model
+finalLm<-lm(mpg ~ wt + qsec + am + wt:am, data=mtcars)
+summary(finalLm)
+#Evaluation model
+anova(fullLm, stepLm, finalLm) 
+summary(finalLm)$coef
+```
+
+Residual plots
+
+```{r}
+#Residual plots
+par(mfrow = c(2, 2))
+plot(finalLm)
+```
+
+
