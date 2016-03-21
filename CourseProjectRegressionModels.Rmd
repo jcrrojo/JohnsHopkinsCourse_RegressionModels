@@ -2,7 +2,7 @@
 title: "Regression Models Course Project (Coursera - JOHNS HOPKINS)"
 author: "Juan Carlos Rodriguez Rojo"
 date: "20 de marzo de 2016"
-output: html_document
+output: pdf_document
 ---
 
 #Motor Trend. Relationship between MPG (miles per gallon) and the kind of transmission
@@ -25,7 +25,7 @@ But to address the issue accurately, we must go further. If we want to know if d
 
 ###Conclusion
 
-Summarily, the difference in MPG between two transmissions is significantly favorable to the manual transmission. However, there are other variables with significant influence, as shown in a process of stepwise regression, which are three independent variables: wt, and am QseC.
+Summarily, the difference in MPG between two transmissions is significantly favorable to the manual transmission. However, there are other variables with significant influence, as shown in a process of stepwise regression, which are three independent variables: wt, am and qsec.
 
 Wt coefficients and am are significant and opposite. If we look at the effect of the interaction between wt and am about MPG, we see that this interaction must be considered in the model.
 
@@ -62,7 +62,6 @@ Initial model and better model without interaction.
 ```{r}
 #initial model
 fullLm <- lm(mpg ~ ., data=mtcars)
-summary(fullLm)
 #better model
 stepLm <- step(fullLm, direction = "backward")
 summary(stepLm)
